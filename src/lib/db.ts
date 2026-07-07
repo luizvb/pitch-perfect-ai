@@ -1,10 +1,9 @@
 import { PGlite } from "@electric-sql/pglite";
 
-// We use an in-memory database or a persistent one if provided in a generic path.
-// For this MVP, let's use a local filesystem path for persistence in Node.js environment
-// But wait, in Next.js edge or serverless environments, it might be ephemeral.
-// Since it's a micro-saas MVP, we'll initialize an in-memory DB or simple local one.
-const db = new PGlite("./.pglite-data");
+// In Vercel serverless functions, the file system is read-only (except /tmp).
+// For this MVP, we will use an in-memory database to avoid EROFS errors.
+// Keep in mind the data will be ephemeral per serverless function instance.
+const db = new PGlite("memory://");
 
 export async function initDb() {
   await db.exec(`
